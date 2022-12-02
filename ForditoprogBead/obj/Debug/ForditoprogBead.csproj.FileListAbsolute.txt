@@ -1,0 +1,10 @@
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\bin\Debug\ForditoprogBead.exe.config
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\bin\Debug\ForditoprogBead.exe
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\bin\Debug\ForditoprogBead.pdb
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.csprojAssemblyReference.cache
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.Properties.Resources.resources
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.csproj.GenerateResource.cache
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.csproj.CoreCompileInputs.cache
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.exe
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.pdb
+C:\Users\sonxe\source\repos\ForditoprogBead\ForditoprogBead\obj\Debug\ForditoprogBead.Form1.resources
