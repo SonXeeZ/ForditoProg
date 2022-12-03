@@ -36,6 +36,9 @@ namespace ForditoprogBead
             InitializeComponent();
             ReadFromFile("bemenet.txt");
             Read();
+            ok_BT.Enabled = false;
+            convert_BT.Enabled = false;
+            okStepByStep_BT.Enabled = false;
         }
 
         void ReadFromFile(string fileName)
@@ -112,14 +115,13 @@ namespace ForditoprogBead
 
             stack = table_DGW.Rows[0].HeaderCell.Value.ToString() + "#";
             input = convertedInputText_TB.Text;
-            
 
             if (input[input.Length - 1] != '#')
             {
                 input = input + "#";
                 convertedInputText_TB.Text = input;
-            
             }
+
 
             string actStack = stack[0].ToString();
             WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
@@ -195,68 +197,19 @@ namespace ForditoprogBead
                    MessageBox.Show(rule);
                }
 
-                switch (rule)
-                {
-                    case "-":
-                        {
-                            WriteFormattedOutputWindow(outputWindow, input,stack,numbers);
-                            WriteFormattedOutputWindow(outputWindow, input, 0);
-                            break;
-                        }
+                // megnézzük milyen szabályt alkalmazzunk  
+
+                CheckCurrentRule(rule,rowIndex);
+
                
-                    case "pop":
-                        {
-                            input = input.Substring(1);
-                            stack = stack.Substring(1);
-                            WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
-                            break;
-                        }
-               
-                        default:
-                        {
-                            try
-                            {
-                                numbers += rule.Split(',')[1].Substring(0, 1);
-                                if((rule.Split(',')[0])[1] == '$')
-                                {
-                                    if(stack[1].ToString() == "'")
-                                    {
-                                        stack = stack.Substring(2);
-                                    }
-                                    else
-                                    {
-                                        stack = stack.Substring(1);
-                                    }
-                                    WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
-                                }
-                                else
-                                {
-                                    if(stack[1].ToString() == "'")
-                                    {
-                                        stack = rule.Split(',')[0].Substring(1) + stack.Substring(2);
-                                    }
-                                    else
-                                    {
-                                        stack = rule.Split(',')[0].Substring(1) + stack.Substring(1);
-                                    }
-                                    WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
-                                }
-               
-                            }
-                            catch
-                            {
-                                WriteFormattedOutputWindow(outputWindow, input, 0 , rowIndex);
-                            }
-                            break;
-                        }
-                }
-                if (stack == "#" && input == stack)
-                {
-                    WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
-                    outputWindow.AppendText("\nELFOGADVA.");
-                    isCorrect = true;
-                    break;
-                }
+
+               if (stack == "#" && input == stack)
+               {
+                   WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
+                   outputWindow.AppendText("\nELFOGADVA.");
+                   isCorrect = true;
+                   break;
+               }
                
                 if(rule == "-")
                 {
@@ -279,6 +232,79 @@ namespace ForditoprogBead
 
             stepByStep = false;
             steps = 0;
+
+            PlayCorrectSoundWhenProgramFinishes(isCorrect);
+        }
+
+
+        void PlayCorrectSoundWhenProgramFinishes(bool isCorrect)
+        {
+            if (isCorrect)
+                PlayAcceptedSound();
+            else
+                PlayNotAcceptedSound();
+        }
+
+        void CheckCurrentRule(string rule, int rowIndex)
+        {
+            switch (rule)
+            {
+                case "-":
+                    {
+                        WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
+                        WriteFormattedOutputWindow(outputWindow, input, 0);
+                        break;
+                    }
+
+                case "pop":
+                    {
+                        //popoljuk az aktuális jelet
+                        input = input.Substring(1);
+                        stack = stack.Substring(1);
+                        if (debugmode)
+                            MessageBox.Show("POP: " + " input(sub1): " + input + " \nstack(sub1): " + stack);
+                        WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
+                        break;
+                    }
+
+                default:
+                    {
+                        try
+                        {
+                            numbers += rule.Split(',')[1].Substring(0, 1);
+                            if ((rule.Split(',')[0])[1] == '$')
+                            {
+                                if (stack[1].ToString() == "'")
+                                {
+                                    stack = stack.Substring(2);
+                                }
+                                else
+                                {
+                                    stack = stack.Substring(1);
+                                }
+                                WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
+                            }
+                            else
+                            {
+                                if (stack[1].ToString() == "'")
+                                {
+                                    stack = rule.Split(',')[0].Substring(1) + stack.Substring(2);
+                                }
+                                else
+                                {
+                                    stack = rule.Split(',')[0].Substring(1) + stack.Substring(1);
+                                }
+                                WriteFormattedOutputWindow(outputWindow, input, stack, numbers);
+                            }
+
+                        }
+                        catch
+                        {
+                            WriteFormattedOutputWindow(outputWindow, input, 0, rowIndex);
+                        }
+                        break;
+                    }
+            }
         }
 
         void ClearTable()
@@ -289,7 +315,7 @@ namespace ForditoprogBead
 
         private void convert_BT_Click(object sender, EventArgs e)
         {
-            convertedInputText_TB.Text = Regex.Replace(InputText_TB.Text, "[0-9]+", "i") + "#";
+            convertedInputText_TB.Text = Regex.Replace(InputText_TB.Text, "[0-9]+", "i");
         }
         
         void WriteFormattedOutputWindow(RichTextBox window, string input, int i)
@@ -348,6 +374,56 @@ namespace ForditoprogBead
             writer.Write(outputWindow.Text);
             writer.Close();
             MessageBox.Show("Output fájl mentve " + outputFileName + " helyre/néven." );
+        }
+
+        private void convertedInputText_TB_TextChanged(object sender, EventArgs e)
+        {
+            CheckConvertedInputText();
+        }
+
+        private void InputText_TB_TextChanged(object sender, EventArgs e)
+        { 
+            CheckInputText();
+        }
+
+        void CheckInputText()
+        {
+            if (InputText_TB.Text.Length < 1 || InputText_TB.Text.Contains("#"))
+            {
+                convert_BT.Enabled = false;
+            }
+            else
+            {
+                convert_BT.Enabled = true;
+            }
+
+            
+        }
+
+        void CheckConvertedInputText()
+        {
+            if (convertedInputText_TB.Text.Length < 1 || convertedInputText_TB.Text.Contains("#"))
+            {
+                ok_BT.Enabled = false;
+                okStepByStep_BT.Enabled = false;
+            }
+            else
+            {
+                ok_BT.Enabled = true;
+                okStepByStep_BT.Enabled = true;
+            }
+        }
+
+        void PlayAcceptedSound()
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer(@"C:\Users\sonxe\Desktop\Forditoprog\ForditoProg\ForditoprogBead\bin\Debug\accept.wav");
+            player.Play();
+        }
+
+        void PlayNotAcceptedSound()
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer(@"C:\Users\sonxe\Desktop\Forditoprog\ForditoProg\ForditoprogBead\bin\Debug\denied.wav");
+            player.Play();
         }
     }
 }

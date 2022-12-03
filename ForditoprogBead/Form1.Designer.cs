@@ -50,6 +50,7 @@
             this.convertedInputText_TB.Name = "convertedInputText_TB";
             this.convertedInputText_TB.Size = new System.Drawing.Size(242, 20);
             this.convertedInputText_TB.TabIndex = 0;
+            this.convertedInputText_TB.TextChanged += new System.EventHandler(this.convertedInputText_TB_TextChanged);
             // 
             // table_DGW
             // 
@@ -83,6 +84,7 @@
             this.InputText_TB.Name = "InputText_TB";
             this.InputText_TB.Size = new System.Drawing.Size(242, 20);
             this.InputText_TB.TabIndex = 4;
+            this.InputText_TB.TextChanged += new System.EventHandler(this.InputText_TB_TextChanged);
             // 
             // label1
             // 
